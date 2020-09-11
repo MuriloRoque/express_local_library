@@ -1,4 +1,6 @@
+/* eslint-disable */
 const Genre = require('../models/genre');
+/* eslint-enable */
 
 // Display list of all Genre.
 exports.genre_list = (req, res) => {

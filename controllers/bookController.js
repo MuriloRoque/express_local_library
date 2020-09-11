@@ -1,4 +1,6 @@
+/* eslint-disable */
 const Book = require('../models/book');
+/* eslint-enable */
 
 exports.index = (req, res) => {
   res.send('NOT IMPLEMENTED: Site Home Page');
