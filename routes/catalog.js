@@ -8,7 +8,7 @@ const authorController = require('../controllers/authorController');
 const genreController = require('../controllers/genreController');
 const bookinstanceController = require('../controllers/bookinstanceController');
 
-/// BOOK ROUTES ///
+// BOOK ROUTES //
 
 // GET catalog home page.
 router.get('/', bookController.index);
@@ -37,7 +37,7 @@ router.get('/book/:id', bookController.book_detail);
 // GET request for list of all Book items.
 router.get('/books', bookController.book_list);
 
-/// AUTHOR ROUTES ///
+// AUTHOR ROUTES //
 
 // GET request for creating Author. NOTE This must come before route for id (i.e. display author).
 router.get('/author/create', authorController.author_create_get);
@@ -63,7 +63,7 @@ router.get('/author/:id', authorController.author_detail);
 // GET request for list of all Authors.
 router.get('/authors', authorController.author_list);
 
-/// GENRE ROUTES ///
+// GENRE ROUTES //
 
 // GET request for creating a Genre. NOTE This must come before route that displays Genre (uses id).
 router.get('/genre/create', genreController.genre_create_get);
@@ -89,7 +89,7 @@ router.get('/genre/:id', genreController.genre_detail);
 // GET request for list of all Genre.
 router.get('/genres', genreController.genre_list);
 
-/// BOOKINSTANCE ROUTES ///
+// BOOKINSTANCE ROUTES //
 
 // GET request for creating a BookInstance. NOTE This must come before route that displays
 // BookInstance (uses id).
