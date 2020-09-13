@@ -1,6 +1,4 @@
-/* eslint-disable */
 const Author = require('../models/author');
-/* eslint-enable */
 
 // Display list of all Authors.
 exports.author_list = (req, res, next) => {

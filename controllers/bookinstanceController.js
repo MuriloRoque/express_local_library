@@ -1,6 +1,4 @@
-/* eslint-disable */
 const BookInstance = require('../models/bookinstance');
-/* eslint-enable */
 
 // Display list of all BookInstances.
 exports.bookinstance_list = (req, res, next) => {
