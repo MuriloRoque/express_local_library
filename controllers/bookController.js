@@ -133,7 +133,9 @@ exports.book_create_post = [
 
         // Mark our selected genres as checked.
         for (let i = 0; i < results.genres.length; i += 1) {
-          if (book.genre.indexOf(results.genres[i].id) > -1) {
+          /* eslint-disable */
+          if (book.genre.indexOf(results.genres[i]._id) > -1) {
+            /* eslint-enable */
             results.genres[i].checked = 'true';
           }
         }
