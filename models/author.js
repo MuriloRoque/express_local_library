@@ -48,9 +48,14 @@ AuthorSchema
     return `/catalog/author/${this._id}`
   });
 AuthorSchema
-  .virtual('due_back_formatted')
+  .virtual('date_of_birth_formatted')
   .get(function () {
     return this.date_of_birth ? moment(this.date_of_birth).format('YYYY-MM-DD') : '';
+  });
+AuthorSchema
+  .virtual('date_of_death_formatted')
+  .get(function () {
+    return this.date_of_death ? moment(this.date_of_death).format('YYYY-MM-DD') : '';
   });
 /* eslint-enable */
 // Export model
