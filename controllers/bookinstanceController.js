@@ -1,15 +1,30 @@
-/* eslint-disable */
 const BookInstance = require('../models/bookinstance');
-/* eslint-enable */
 
 // Display list of all BookInstances.
-exports.bookinstance_list = (req, res) => {
-  res.send('NOT IMPLEMENTED: BookInstance list');
+exports.bookinstance_list = (req, res, next) => {
+  BookInstance.find()
+    .populate('book')
+    .exec((err, listBookinstances) => {
+      if (err) { next(err); }
+      // Successful, so render
+      res.render('bookinstance_list', { title: 'Book Instance List', bookinstance_list: listBookinstances });
+    });
 };
 
 // Display detail page for a specific BookInstance.
-exports.bookinstance_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: BookInstance detail: ${req.params.id}`);
+exports.bookinstance_detail = (req, res, next) => {
+  BookInstance.findById(req.params.id)
+    .populate('book')
+    .exec((err, bookinstance) => {
+      if (err) { next(err); }
+      if (bookinstance == null) { // No results.
+        err = new Error('Book copy not found');
+        err.status = 404;
+        next(err);
+      }
+      // Successful, so render.
+      res.render('bookinstance_detail', { title: `Copy: ${bookinstance.book.title}`, bookinstance });
+    });
 };
 
 // Display BookInstance create form on GET.

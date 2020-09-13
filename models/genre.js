@@ -14,7 +14,7 @@ const GenreSchema = new Schema(
 /* eslint-disable */
 GenreSchema
   .virtual('url')
-  .get(() => {
+  .get(function() {
     return `/catalog/genre/${this._id}`;
   });
 /* eslint-enable */

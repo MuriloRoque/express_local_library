@@ -1,15 +1,40 @@
-/* eslint-disable */
+const async = require('async');
 const Author = require('../models/author');
-/* eslint-enable */
+const Book = require('../models/book');
 
 // Display list of all Authors.
-exports.author_list = (req, res) => {
-  res.send('NOT IMPLEMENTED: Author list');
+exports.author_list = (req, res, next) => {
+  Author.find()
+    .populate('author')
+    .sort([['family_name', 'ascending']])
+    .exec((err, listAuthors) => {
+      if (err) { next(err); }
+      // Successful, so render
+      res.render('author_list', { title: 'Author List', author_list: listAuthors });
+    });
 };
 
 // Display detail page for a specific Author.
-exports.author_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Author detail: ${req.params.id}`);
+exports.author_detail = (req, res, next) => {
+  async.parallel({
+    author: (callback) => {
+      Author.findById(req.params.id)
+        .exec(callback);
+    },
+    authors_books: (callback) => {
+      Book.find({ author: req.params.id }, 'title summary')
+        .exec(callback);
+    },
+  }, (err, results) => {
+    if (err) { next(err); } // Error in API usage.
+    if (results.author == null) { // No results.
+      err = new Error('Author not found');
+      err.status = 404;
+      next(err);
+    }
+    // Successful, so render.
+    res.render('author_detail', { title: 'Author Detail', author: results.author, author_books: results.authors_books });
+  });
 };
 
 // Display Author create form on GET.
