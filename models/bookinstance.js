@@ -17,7 +17,7 @@ const BookInstanceSchema = new Schema(
 /* eslint-disable */
 BookInstanceSchema
   .virtual('url')
-  .get(() => {
+  .get(function () {
     return `/catalog/bookinstance/${this._id}`;
   });
 /* eslint-enable */
