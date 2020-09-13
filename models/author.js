@@ -47,6 +47,11 @@ AuthorSchema
   .get(function() {
     return `/catalog/author/${this._id}`
   });
+AuthorSchema
+  .virtual('due_back_formatted')
+  .get(function () {
+    return this.date_of_birth ? moment(this.date_of_birth).format('YYYY-MM-DD') : '';
+  });
 /* eslint-enable */
 // Export model
 module.exports = mongoose.model('Author', AuthorSchema);
