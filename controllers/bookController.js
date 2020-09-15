@@ -154,13 +154,13 @@ exports.book_create_post = [
   },
 ];
 
-// Display Book delete form on GET.
+// Display book delete form on GET.
 exports.book_delete_get = (req, res, next) => {
   async.parallel({
     book: (callback) => {
-      Book.findById(req.params.id).exec(callback);
+      Book.findById(req.params.id).populate('author').populate('genre').exec(callback);
     },
-    books_bookinstances: (callback) => {
+    book_bookinstances: (callback) => {
       BookInstance.find({ book: req.params.id }).exec(callback);
     },
   }, (err, results) => {
@@ -169,30 +169,32 @@ exports.book_delete_get = (req, res, next) => {
       res.redirect('/catalog/books');
     }
     // Successful, so render.
-    res.render('book_delete', { title: 'Delete Book', book: results.book, book_bookinstances: results.book_bookinstances });
+    res.render('book_delete', { title: 'Delete Book', book: results.book, book_instances: results.book_bookinstances });
   });
 };
 
-// Handle Book delete on POST.
+// Handle book delete on POST.
 exports.book_delete_post = (req, res, next) => {
+  // Assume the post has valid id (ie no validation/sanitization).
+
   async.parallel({
     book: (callback) => {
-      Book.findById(req.body.bookid).exec(callback);
+      Book.findById(req.body.id).populate('author').populate('genre').exec(callback);
     },
-    books_bookinstances: (callback) => {
-      BookInstance.find({ book: req.body.bookid }).exec(callback);
+    book_bookinstances: (callback) => {
+      BookInstance.find({ book: req.body.id }).exec(callback);
     },
   }, (err, results) => {
     if (err) { next(err); }
     // Success
-    if (results.books_bookinstances.length > 0) {
-      // Book has bookinstances. Render in same way as for GET route.
-      res.render('book_delete', { title: 'Delete Book', book: results.book, book_bookinstances: results.book_bookinstances });
+    if (results.book_bookinstances.length > 0) {
+      // Book has book_instances. Render in same way as for GET route.
+      res.render('book_delete', { title: 'Delete Book', book: results.book, book_instances: results.book_bookinstances });
     } else {
-      // Book has no bookinstances. Delete object and redirect to the list of books.
-      Book.findByIdAndRemove(req.body.bookid, (err) => {
+      // Book has no BookInstance objects. Delete object and redirect to the list of books.
+      Book.findByIdAndRemove(req.body.id, (err) => {
         if (err) { next(err); }
-        // Success - go to book list
+        // Success - got to books list.
         res.redirect('/catalog/books');
       });
     }
