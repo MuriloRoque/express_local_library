@@ -1,5 +1,7 @@
 const async = require('async');
 const validator = require('express-validator');
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 const Genre = require('../models/genre');
 const Book = require('../models/book');
 
@@ -149,6 +151,37 @@ exports.genre_update_get = (req, res, next) => {
 };
 
 // Handle Genre update on POST.
-exports.genre_update_post = (req, res) => {
-  res.send('NOT IMPLEMENTED: Genre update POST');
-};
+exports.genre_update_post = [
+
+  // Validate that the name field is not empty.
+  body('name', 'Genre name required').isLength({ min: 1 }).trim(),
+
+  // Sanitize (escape) the name field.
+  sanitizeBody('name').escape(),
+
+  // Process request after validation and sanitization.
+  (req, res, next) => {
+    // Extract the validation errors from a request .
+    const errors = validationResult(req);
+
+    // Create a genre object with escaped and trimmed data (and the old id!)
+    const genre = new Genre(
+      {
+        name: req.body.name,
+        _id: req.params.id,
+      },
+    );
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values and error messages.
+      res.render('genre_form', { title: 'Update Genre', genre, errors: errors.array() });
+    } else {
+      // Data from form is valid. Update the record.
+      Genre.findByIdAndUpdate(req.params.id, genre, {}, (err, thegenre) => {
+        if (err) { next(err); }
+        // Successful - redirect to genre detail page.
+        res.redirect(thegenre.url);
+      });
+    }
+  },
+];
