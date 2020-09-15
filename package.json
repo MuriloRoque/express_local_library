@@ -1,0 +1,30 @@
+{
+  "name": "express-local-library",
+  "version": "0.0.0",
+  "engines": {
+    "node": "14.2.0"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "devstart": "nodemon ./bin/www",
+    "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart"
+  },
+  "dependencies": {
+    "async": "^3.2.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-validator": "^6.6.1",
+    "http-errors": "~1.6.3",
+    "moment": "^2.27.0",
+    "mongoose": "^5.10.4",
+    "morgan": "~1.9.1",
+    "pug": "2.0.0-beta11"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-react": "^7.20.6",
+    "nodemon": "^2.0.4"
+  }
+}
