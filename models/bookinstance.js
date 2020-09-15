@@ -24,7 +24,12 @@ BookInstanceSchema
 BookInstanceSchema
   .virtual('due_back_formatted')
   .get(function () {
-    return moment(this.due_back).format('MMMM Do, YYYY');
+    return moment(this.due_back).format('MMMM DD, YYYY');
+  });
+BookInstanceSchema
+  .virtual('due_back_yyyy_mm_dd')
+  .get(function () {
+    return moment(this.due_back).format('YYYY-MM-DD');
   });
 /* eslint-enable */
 // Export model
