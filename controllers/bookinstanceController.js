@@ -1,3 +1,4 @@
+const async = require('async');
 const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 const BookInstance = require('../models/bookinstance');
@@ -117,8 +118,30 @@ exports.bookinstance_delete_post = (req, res, next) => {
 };
 
 // Display BookInstance update form on GET.
-exports.bookinstance_update_get = (req, res) => {
-  res.send('NOT IMPLEMENTED: BookInstance update GET');
+exports.bookinstance_update_get = (req, res, next) => {
+  // Get book, authors and genres for form.
+  async.parallel({
+    bookinstance: (callback) => {
+      BookInstance.findById(req.params.id).populate('book').exec(callback);
+    },
+    books: (callback) => {
+      Book.find(callback);
+    },
+
+  }, (err, results) => {
+    if (err) { next(err); }
+    if (results.bookinstance == null) { // No results.
+      err = new Error('Book copy not found');
+      err.status = 404;
+      next(err);
+    }
+    // Success.
+    res.render('bookinstance_form', {
+      /* eslint-disable */
+      title: 'Update  BookInstance', book_list: results.books, selected_book: results.bookinstance.book._id, bookinstance: results.bookinstance,
+    });
+    /* eslint-enable */
+  });
 };
 
 // Handle bookinstance update on POST.
