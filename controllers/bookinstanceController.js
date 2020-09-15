@@ -144,7 +144,55 @@ exports.bookinstance_update_get = (req, res, next) => {
   });
 };
 
-// Handle bookinstance update on POST.
-exports.bookinstance_update_post = (req, res) => {
-  res.send('NOT IMPLEMENTED: BookInstance update POST');
-};
+// Handle BookInstance update on POST.
+exports.bookinstance_update_post = [
+
+  // Validate fields.
+  body('book', 'Book must be specified').isLength({ min: 1 }).trim(),
+  body('imprint', 'Imprint must be specified').isLength({ min: 1 }).trim(),
+  body('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
+
+  // Sanitize fields.
+  sanitizeBody('book').escape(),
+  sanitizeBody('imprint').escape(),
+  sanitizeBody('status').escape(),
+  sanitizeBody('due_back').toDate(),
+
+  // Process request after validation and sanitization.
+  (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a BookInstance object with escaped/trimmed data and current id.
+    const bookinstance = new BookInstance(
+      {
+        book: req.body.book,
+        imprint: req.body.imprint,
+        status: req.body.status,
+        due_back: req.body.due_back,
+        _id: req.params.id,
+      },
+    );
+
+    if (!errors.isEmpty()) {
+      // There are errors so render the form again, passing sanitized values and errors.
+      Book.find({}, 'title')
+        .exec((err, books) => {
+          if (err) { next(err); }
+          // Successful, so render.
+          res.render('bookinstance_form', {
+            /* eslint-disable */
+            title: 'Update BookInstance', book_list: books, selected_book: bookinstance.book._id, errors: errors.array(), bookinstance,
+          });
+          /* eslint-enable */
+        });
+    } else {
+      // Data from form is valid.
+      BookInstance.findByIdAndUpdate(req.params.id, bookinstance, {}, (err, thebookinstance) => {
+        if (err) { next(err); }
+        // Successful - redirect to detail page.
+        res.redirect(thebookinstance.url);
+      });
+    }
+  },
+];
